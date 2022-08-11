@@ -6,6 +6,10 @@
     즉, 달팽이 리스트는 다음과 같이 생긴 연결리스트이다. 노드 안의 수는 저장된 값을 뜻한다.
 */
 
+
+// !!!시간 초과가 발생하는 코드!!! //
+
+
 class Lnode {
     private data: number;
     private next: Lnode | null;
