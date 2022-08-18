@@ -1,7 +1,6 @@
 /*
     https://www.acmicpc.net/problem/1406
 */
-
 class Editor {
     constructor() {
         this.head = new Dnode(null);
@@ -9,53 +8,70 @@ class Editor {
     }
 
     init(initStr) {
-        let temp = new Dnode(initStr[0]);
-        this.head = temp;
+        let temp = this.head;
 
-        for(let i = 1; i < initStr.length; i++) {
+        for (let i = 0; i < initStr.length; i++) {
             const newNode = new Dnode(initStr[i]);
-            temp.next = newNode;
-            newNode.previous = temp;
-            temp = temp.next;
+            this.head.next = newNode;
+            newNode.previous = this.head;
+            this.head = this.head.next;
         }
-        this.cursor = temp;
+        this.cursor = this.head;
+        this.head = temp;
     }
 
     moveLeft() {
-        if(this.cursor.previous)
+        if (this.cursor.previous)
             this.cursor = this.cursor.previous;
-        else {
-            const temp = new Dnode(null);
-            temp.next = this.cursor;
-            this.cursor = temp;
-        }
     }
 
     moveRight() {
-        if(this.cursor.next)
+        if (this.cursor.next)
             this.cursor = this.cursor.next;
     }
 
     push(c) {
         const newNode = new Dnode(c);
-        
-        if(!this.cursor.previous) {
-            this.cursor.previous = newNode;
-            newNode.next = this.cursor;
-            this.head = newNode;
+
+        // 커서가 맨 왼쪽
+        if (!this.cursor.previous) {
+            newNode.next = this.cursor.next;
+            this.cursor.next.previous = newNode;
+            newNode.previous = this.cursor;
+            this.cursor.next = newNode;
+            this.cursor = newNode;
         }
 
-        else if(!this.cursor.next) {
+        else if (!this.cursor.next) {
             newNode.previous = this.cursor;
             this.cursor.next = newNode;
             this.cursor = newNode;
         }
 
         else {
-            newNode.previous = this.cursor;
+            //acd
             newNode.next = this.cursor.next;
+            this.cursor.next.previous = newNode;
+            newNode.previous = this.cursor;
             this.cursor.next = newNode;
             this.cursor = newNode;
+        }
+    }
+
+    delete() {
+        if (!this.cursor.previous) return;
+        else if (!this.cursor.next) {
+            this.cursor = this.cursor.previous;
+            this.cursor.next.previous = null;
+            this.cursor.next = null;
+        }
+        else {
+            const temp = this.cursor.next;
+            this.cursor = this.cursor.previous;
+            this.cursor.next.next = null;
+            this.cursor.next.previous = null;
+            this.cursor.next = temp;
+            temp.previous = this.cursor;
         }
     }
 
@@ -63,8 +79,7 @@ class Editor {
         const result = [];
         let temp = this.head;
 
-        while(temp) {
-            console.log(temp);
+        while (temp) {
             result.push(temp.item);
             temp = temp.next;
         }
@@ -72,8 +87,23 @@ class Editor {
     }
 }
 
+const fs = require("fs");
 const Dnode = require("./util");
+const input = fs.readFileSync('input.txt').toString().split('\n'); // 테스트용 파일
+//const input = fs.readFileSync('/dev/stdin').toString().trim().split('\n'); // 제출용 코드
+const initStr = input.shift();
+const commandSize = Number(input.shift());
 
-const t = new Editor();
-t.init("abcd");
-t.print();
+const editor = new Editor();
+editor.init(initStr);
+
+for (let i = 0; i < commandSize; i++) {
+    const [command, param] = input.shift().split(" ");
+
+    if (command === "L") editor.moveLeft();
+    else if (command === "D") editor.moveRight();
+    else if (command === "B") editor.delete();
+    else if (command === "P") editor.push(param);
+}
+
+editor.print();
