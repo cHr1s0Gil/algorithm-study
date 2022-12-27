@@ -5,7 +5,7 @@
 */
 
 const fs = require('fs');
-const input = fs.readFileSync('test.txt').toString().split('\n'); // 테스트용 파일
+const input = fs.readFileSync('input.txt').toString().split('\n'); // 테스트용 파일
 //const input = fs.readFileSync('/dev/stdin').toString().trim().split('\n');
 
 const [rowSize, colSize] = input.shift().split(' ').map(Number);
