@@ -12,16 +12,19 @@ class ListNode {
 
 public class L_141 {
     public boolean hasCycle(ListNode head) {
-        ListNode singleForward = head;
-        ListNode doubleForward = head;
-    
-        while(singleForward != null && singleForward.next != null) {
-            if(singleForward == doubleForward)
-                return true;
-            singleForward = singleForward.next;
-            doubleForward = doubleForward.next.next;
-        }
+        if(head == null)
+            return false;
 
+        ListNode singleStep = head;
+        ListNode doubleStep = head;
+
+        while(doubleStep.next != null && doubleStep.next.next != null) {
+            singleStep = singleStep.next;
+            doubleStep = doubleStep.next.next;
+
+            if(singleStep == doubleStep)
+                return true;
+        }
         return false;
     }
 }
